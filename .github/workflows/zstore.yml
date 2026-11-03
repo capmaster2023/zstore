@@ -14,3 +14,23 @@ jobs:
       ZSTORE_KEY_PASSWORD: ${{ secrets.ZSTORE_KEY_PASSWORD }}
       ZSTORE_API_URL: ${{ secrets.ZSTORE_API_URL }}
       ZSTORE_CI_TOKEN: ${{ secrets.ZSTORE_CI_TOKEN }}
+
+  # Test : publie l'APK comme pré-release GitHub pour le télécharger facilement sur le téléphone
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: apk
+          merge-multiple: true
+      - run: mv apk/app-signed.apk Grimaces-Magiques-test.apk
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: grimaces-test-${{ github.run_number }}
+          name: Test — Grimaces Magiques (${{ github.run_number }})
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          files: Grimaces-Magiques-test.apk
