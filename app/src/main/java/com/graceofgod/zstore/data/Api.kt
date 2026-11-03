@@ -56,6 +56,11 @@ interface ZStoreApi {
     @GET("admin/builds/{id}") suspend fun build(@Path("id") id: Int): BuildResponse
     @POST("admin/builds/{id}/retry") suspend fun retryBuild(@Path("id") id: Int): BuildResponse
     @GET("admin/sales") suspend fun sales(): SalesResponse
+
+    @GET("admin/ai/models") suspend fun aiModels(): AiModelsResponse
+    @GET("admin/ai/jobs") suspend fun aiJobs(): AiJobsResponse
+    @GET("admin/ai/jobs/{id}") suspend fun aiJob(@Path("id") id: Int): AiJobResponse
+    @POST("admin/ai/jobs") suspend fun createAiJob(@Body body: AiJobBody): AiJobResponse
 }
 
 val json = Json {

@@ -167,6 +167,8 @@ fun ZStoreRoot(container: AppContainer, openRequests: Flow<String>) {
                         onUpload = { nav.navigate("admin/upload") },
                         onNewBuild = { nav.navigate("admin/build/new") },
                         onOpenBuild = { nav.navigate("admin/build/$it") },
+                        onNewAi = { nav.navigate("admin/ai/new") },
+                        onOpenAiJob = { nav.navigate("admin/ai/$it") },
                     )
                 }
             }
@@ -199,6 +201,7 @@ fun ZStoreRoot(container: AppContainer, openRequests: Flow<String>) {
                     onBack = { nav.popBackStack() },
                     onOpenApp = { nav.navigate("admin/app/$it") },
                     onRebuild = { appId -> nav.navigate("admin/build/new" + (appId?.let { "?appId=$it" } ?: "")) },
+                    onFixWithAi = { bid -> nav.navigate("admin/ai/new?buildId=$bid") },
                 )
             }
             composable("admin/app/{id}", listOf(navArgument("id") { type = NavType.IntType })) { e ->
@@ -209,6 +212,30 @@ fun ZStoreRoot(container: AppContainer, openRequests: Flow<String>) {
                     onNewApk = { nav.navigate("admin/upload?appId=$it") },
                     onNewBuild = { nav.navigate("admin/build/new?appId=$it") },
                     onDeleted = { nav.popBackStack("admin", inclusive = false) },
+                    onEditWithAi = { nav.navigate("admin/ai/new?appId=$it") },
+                )
+            }
+            composable(
+                "admin/ai/new?appId={appId}&buildId={buildId}",
+                listOf(
+                    navArgument("appId") { type = NavType.IntType; defaultValue = -1 },
+                    navArgument("buildId") { type = NavType.IntType; defaultValue = -1 },
+                ),
+            ) { e ->
+                AiNewScreen(
+                    deps,
+                    appId = e.arguments?.getInt("appId")?.takeIf { it > 0 },
+                    buildId = e.arguments?.getInt("buildId")?.takeIf { it > 0 },
+                    onBack = { nav.popBackStack() },
+                    onStarted = { id -> nav.navigate("admin/ai/$id") { popUpTo("admin") } },
+                )
+            }
+            composable("admin/ai/{id}", listOf(navArgument("id") { type = NavType.IntType })) { e ->
+                AiJobScreen(
+                    deps, e.arguments?.getInt("id") ?: 0,
+                    onBack = { nav.popBackStack() },
+                    onOpenBuild = { nav.navigate("admin/build/$it") },
+                    onFix = { bid -> nav.navigate("admin/ai/new?buildId=$bid") },
                 )
             }
         }

@@ -142,6 +142,11 @@ class Repository(
     suspend fun sales() = apiCall { api.sales() }
     suspend fun appDetail(id: Int) = apiCall { api.app(id) }
 
+    suspend fun aiModels() = apiCall { api.aiModels() }
+    suspend fun aiJobs() = apiCall { api.aiJobs().jobs }
+    suspend fun aiJob(id: Int) = apiCall { api.aiJob(id).job }
+    suspend fun createAiJob(body: AiJobBody) = apiCall { api.createAiJob(body).job }
+
     /** Copie un fichier choisi par l'utilisateur dans le cache de l'app. */
     suspend fun copyToCache(uri: Uri, name: String): File = withContext(Dispatchers.IO) {
         val dir = File(context.cacheDir, "picked").apply { mkdirs() }

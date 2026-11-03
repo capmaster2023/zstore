@@ -134,3 +134,57 @@ data class SalesResponse(
 
 @Serializable
 data class ApiError(val error: String)
+
+// ---------------------------------------------------------------- IA Claude
+
+@Serializable
+data class AiModel(
+    val id: String,
+    val label: String,
+    val description: String = "",
+    val efforts: List<String> = listOf("low", "medium", "high"),
+    @SerialName("default_effort") val defaultEffort: String = "high",
+)
+
+@Serializable
+data class AiModelsResponse(val models: List<AiModel> = emptyList(), val configured: Boolean = false)
+
+@Serializable
+data class AiJobBody(
+    val prompt: String,
+    val model: String,
+    val effort: String,
+    @SerialName("app_id") val appId: Int? = null,
+    @SerialName("build_id") val buildId: Int? = null,
+)
+
+@Serializable
+data class AiJob(
+    val id: Int,
+    val mode: String,
+    val model: String,
+    @SerialName("model_label") val modelLabel: String = "",
+    val effort: String,
+    val prompt: String = "",
+    val status: String,
+    val progress: String? = null,
+    val summary: String? = null,
+    val error: String? = null,
+    @SerialName("app_id") val appId: Int? = null,
+    @SerialName("app_name") val appName: String? = null,
+    val repo: String? = null,
+    @SerialName("build_id") val buildId: Int? = null,
+    @SerialName("build_status") val buildStatus: String? = null,
+    val files: List<String> = emptyList(),
+    @SerialName("input_tokens") val inputTokens: Int = 0,
+    @SerialName("output_tokens") val outputTokens: Int = 0,
+    @SerialName("created_at") val createdAt: String? = null,
+) {
+    val isActive: Boolean get() = status in listOf("queued", "thinking", "writing", "pushing")
+}
+
+@Serializable
+data class AiJobResponse(val job: AiJob)
+
+@Serializable
+data class AiJobsResponse(val jobs: List<AiJob> = emptyList())

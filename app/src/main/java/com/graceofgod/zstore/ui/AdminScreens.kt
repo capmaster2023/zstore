@@ -38,6 +38,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
@@ -128,13 +129,16 @@ fun AdminScreen(
     onUpload: () -> Unit,
     onNewBuild: () -> Unit,
     onOpenBuild: (Int) -> Unit,
+    onNewAi: () -> Unit,
+    onOpenAiJob: (Int) -> Unit,
 ) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     Scaffold(
         floatingActionButton = {
             when (tab) {
                 0 -> ExtendedFloatingActionButton(onClick = onUpload, icon = { Icon(Icons.Filled.UploadFile, null) }, text = { Text("Ajouter un APK") })
-                1 -> ExtendedFloatingActionButton(onClick = onNewBuild, icon = { Icon(Icons.Filled.Code, null) }, text = { Text("Compiler du code") })
+                1 -> ExtendedFloatingActionButton(onClick = onNewAi, icon = { Icon(Icons.Filled.AutoAwesome, null) }, text = { Text("Créer avec Claude") })
+                2 -> ExtendedFloatingActionButton(onClick = onNewBuild, icon = { Icon(Icons.Filled.Code, null) }, text = { Text("Compiler du code") })
                 else -> Unit
             }
         },
@@ -144,13 +148,14 @@ fun AdminScreen(
         Column(Modifier.padding(pad)) {
             Text("Admin", style = MaterialTheme.typography.displaySmall, modifier = Modifier.padding(start = 20.dp, top = 28.dp, bottom = 8.dp))
             TabRow(selectedTabIndex = tab, containerColor = Z.Bg) {
-                listOf("Apps", "Builds", "Ventes").forEachIndexed { i, t ->
+                listOf("Apps", "IA", "Builds", "Ventes").forEachIndexed { i, t ->
                     Tab(selected = tab == i, onClick = { tab = i }, text = { Text(t) })
                 }
             }
             when (tab) {
                 0 -> AdminAppsTab(deps, onOpenAppAdmin)
-                1 -> BuildsTab(deps, onOpenBuild)
+                1 -> AiTab(deps, onOpenAiJob)
+                2 -> BuildsTab(deps, onOpenBuild)
                 else -> SalesTab(deps)
             }
         }
@@ -641,7 +646,7 @@ fun slug(s: String, keepTrailing: Boolean = false): String {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BuildDetailScreen(deps: Deps, buildId: Int, onBack: () -> Unit, onOpenApp: (Int) -> Unit, onRebuild: (Int?) -> Unit) {
+fun BuildDetailScreen(deps: Deps, buildId: Int, onBack: () -> Unit, onOpenApp: (Int) -> Unit, onRebuild: (Int?) -> Unit, onFixWithAi: (Int) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var build by remember { mutableStateOf<Build?>(null) }
@@ -724,10 +729,17 @@ fun BuildDetailScreen(deps: Deps, buildId: Int, onBack: () -> Unit, onOpenApp: (
                                 )
                             }
                         }
-                        Text(
-                            "Astuce : copie les erreurs et colle-les à Claude pour qu'il corrige le code.",
-                            color = Z.Muted, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 10.dp),
-                        )
+                        Button(
+                            onClick = { onFixWithAi(b.id) },
+                            enabled = b.commitSha != null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 14.dp)
+                                .height(50.dp),
+                        ) {
+                            Icon(Icons.Filled.AutoAwesome, null, Modifier.size(18.dp))
+                            Text("  Corriger avec Claude")
+                        }
                         Row(Modifier.padding(top = 14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             OutlinedButton(onClick = {
                                 scope.launch {
@@ -736,7 +748,7 @@ fun BuildDetailScreen(deps: Deps, buildId: Int, onBack: () -> Unit, onOpenApp: (
                             }) {
                                 Icon(Icons.Filled.Refresh, null, Modifier.size(18.dp)); Text("  Relancer")
                             }
-                            Button(onClick = { onRebuild(b.appId) }) { Text("Envoyer un code corrigé") }
+                            OutlinedButton(onClick = { onRebuild(b.appId) }) { Text("Envoyer un zip corrigé") }
                         }
                     }
                     else -> {
@@ -810,6 +822,7 @@ fun AdminAppEditScreen(
     onNewApk: (Int) -> Unit,
     onNewBuild: (Int) -> Unit,
     onDeleted: () -> Unit,
+    onEditWithAi: (Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     var app by remember { mutableStateOf<StoreApp?>(null) }
@@ -878,6 +891,11 @@ fun AdminAppEditScreen(
                 }
                 OutlinedButton(onClick = { onNewBuild(appId) }, modifier = Modifier.weight(1f)) {
                     Icon(Icons.Filled.Code, null, Modifier.size(18.dp)); Text(" Compiler")
+                }
+            }
+            if (a.githubRepo != null) {
+                Button(onClick = { onEditWithAi(appId) }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                    Icon(Icons.Filled.AutoAwesome, null, Modifier.size(18.dp)); Text("  Modifier avec Claude")
                 }
             }
 
