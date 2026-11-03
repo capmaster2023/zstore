@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mm_bg">#15102B</color>
+    <color name="mm_icon_bg">#7B4DFF</color>
+
+    <style name="Theme.MangaMoi" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/mm_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>
