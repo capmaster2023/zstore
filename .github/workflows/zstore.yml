@@ -1,0 +1,36 @@
+# Compilation par Z-Store — la logique est dans capmaster2023/zstore-builder
+name: Z-Store build
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+jobs:
+  build:
+    uses: capmaster2023/zstore-builder/.github/workflows/build.yml@main
+    secrets:
+      ZSTORE_KEYSTORE_BASE64: ${{ secrets.ZSTORE_KEYSTORE_BASE64 }}
+      ZSTORE_KEYSTORE_PASSWORD: ${{ secrets.ZSTORE_KEYSTORE_PASSWORD }}
+      ZSTORE_KEY_ALIAS: ${{ secrets.ZSTORE_KEY_ALIAS }}
+      ZSTORE_KEY_PASSWORD: ${{ secrets.ZSTORE_KEY_PASSWORD }}
+      ZSTORE_API_URL: ${{ secrets.ZSTORE_API_URL }}
+      ZSTORE_CI_TOKEN: ${{ secrets.ZSTORE_CI_TOKEN }}
+
+  # Test : publie l'APK comme pré-release GitHub pour le télécharger facilement sur le téléphone
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: apk
+          merge-multiple: true
+      - run: mv apk/app-signed.apk Z-TV-test.apk
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ztv-test-${{ github.run_number }}
+          name: Test — Z-TV (${{ github.run_number }})
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          files: Z-TV-test.apk

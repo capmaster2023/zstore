@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Écran de télé avec un « Z » -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Antennes -->
+    <path
+        android:strokeColor="#C6FF3D"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M46,32 L40,24 M62,32 L68,24" />
+    <!-- Écran -->
+    <path
+        android:strokeColor="#C6FF3D"
+        android:strokeWidth="4"
+        android:pathData="M30,36 L78,36 Q82,36 82,40 L82,72 Q82,76 78,76 L30,76 Q26,76 26,72 L26,40 Q26,36 30,36 Z" />
+    <!-- Z -->
+    <path
+        android:fillColor="#C6FF3D"
+        android:pathData="M42,45 L66,45 L66,50 L50,65 L66,65 L66,70 L42,70 L42,65 L58,50 L42,50 Z" />
+</vector>
