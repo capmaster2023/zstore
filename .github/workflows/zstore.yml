@@ -1,0 +1,16 @@
+# Compilation par Z-Store — la logique est dans capmaster2023/zstore-builder
+name: Z-Store build
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+jobs:
+  build:
+    uses: capmaster2023/zstore-builder/.github/workflows/build.yml@main
+    secrets:
+      ZSTORE_KEYSTORE_BASE64: ${{ secrets.ZSTORE_KEYSTORE_BASE64 }}
+      ZSTORE_KEYSTORE_PASSWORD: ${{ secrets.ZSTORE_KEYSTORE_PASSWORD }}
+      ZSTORE_KEY_ALIAS: ${{ secrets.ZSTORE_KEY_ALIAS }}
+      ZSTORE_KEY_PASSWORD: ${{ secrets.ZSTORE_KEY_PASSWORD }}
+      ZSTORE_API_URL: ${{ secrets.ZSTORE_API_URL }}
+      ZSTORE_CI_TOKEN: ${{ secrets.ZSTORE_CI_TOKEN }}

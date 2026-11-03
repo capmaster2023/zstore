@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Visage qui fait un clin d'œil et tire la langue -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Tête -->
+    <path
+        android:fillColor="#FFD23F"
+        android:pathData="M28,54 a26,26 0 1,0 52,0 a26,26 0 1,0 -52,0 Z" />
+    <!-- Œil ouvert -->
+    <path
+        android:fillColor="#2A1659"
+        android:pathData="M41,48 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <!-- Clin d'œil -->
+    <path
+        android:strokeColor="#2A1659"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M59,49 Q63,45 67,49" />
+    <!-- Langue -->
+    <path
+        android:fillColor="#FF5FA2"
+        android:pathData="M49,63 L59,63 Q59,73 54,73 Q49,73 49,63 Z" />
+    <!-- Sourire -->
+    <path
+        android:strokeColor="#2A1659"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M41,60 Q54,70 67,60" />
+</vector>
